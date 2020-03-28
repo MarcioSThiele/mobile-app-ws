@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MobileAppWsApplication {
 
 	//this is the main application
+	//second commentary
 	public static void main(String[] args) {
 		SpringApplication.run(MobileAppWsApplication.class, args);
 	}
