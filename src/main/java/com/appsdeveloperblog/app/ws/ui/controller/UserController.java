@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.appsdeveloperblog.app.ws.ui.model.response.UserRest;
+import com.appsdeveloperblog.app.ws.ui.model.request.UpdateUserDetailsRequestModel;
 import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
-
 
 @RestController
 @RequestMapping("users") //http://localhost:8080/users
@@ -58,9 +58,9 @@ public class UserController {
 		
 		//check if exists de userId on the java memory, if exists return the userId object
 		if (users.containsKey(userId)) {
-			return new ResponseEntity<> (users.get(userId), HttpStatus.OK);
+			return new ResponseEntity<UserRest> (users.get(userId), HttpStatus.OK);
 		}else {
-			return new ResponseEntity<> (HttpStatus.NO_CONTENT);
+			return new ResponseEntity<UserRest> (HttpStatus.NO_CONTENT);
 		}
 	}
 	
@@ -98,9 +98,27 @@ public class UserController {
 	//
 	//
 	//PUT
-	@PutMapping
-	public String updateUser() {
-		return "update user was called...";
+	@PutMapping(path="/{userId}",
+				consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE },
+		        produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<UserRest> updateUser(@PathVariable String userId, 
+							 @Valid @RequestBody UpdateUserDetailsRequestModel userDetails) {
+		
+		if(users.containsKey(userId)) {
+			
+			UserRest storedUserDetails = users.get(userId);
+			
+			storedUserDetails.setFirstName(userDetails.getFirstName());
+			storedUserDetails.setLastName(userDetails.getLastName());
+			
+			users.put(userId, storedUserDetails);
+			
+			return new ResponseEntity<UserRest>(users.get(userId), HttpStatus.OK);
+			
+		}else {
+			return new ResponseEntity<UserRest> (HttpStatus.NO_CONTENT);
+		}
+		
 	}
 	
 	//5
