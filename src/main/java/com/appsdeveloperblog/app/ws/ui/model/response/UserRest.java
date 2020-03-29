@@ -6,6 +6,7 @@ public class UserRest {
 	private String firstName;
 	private String lastName;
 	private String email;
+	private String userId;
 	private String password;
 	
 	//
@@ -42,5 +43,13 @@ public class UserRest {
 	
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 }

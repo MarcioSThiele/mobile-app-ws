@@ -1,5 +1,9 @@
 package com.appsdeveloperblog.app.ws.ui.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,8 @@ import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
 @RequestMapping("users") //http://localhost:8080/users
 public class UserController {
 	
+	Map<String, UserRest> users;
+	
 	//1
 	//getting request with page and limit 
 	//this get we are using parameters page, limit, sort 
@@ -43,14 +49,19 @@ public class UserController {
 				produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
 		
-		UserRest user = new UserRest();
+		/*
+		 * UserRest user = new UserRest();
+		 * 
+		 * user.setFirstName("Marcio"); user.setLastName("Thiele");
+		 * user.setEmail("marcio.sthiele@gmail.com"); user.setPassword("" + userId);
+		 */
 		
-		user.setFirstName("Marcio");
-		user.setLastName("Thiele");
-		user.setEmail("marcio.sthiele@gmail.com");
-		user.setPassword("" + userId);
-		
-		return new ResponseEntity<UserRest> (user, HttpStatus.OK);
+		//check if exists de userId on the java memory, if exists return the userId object
+		if (users.containsKey(userId)) {
+			return new ResponseEntity<> (users.get(userId), HttpStatus.OK);
+		}else {
+			return new ResponseEntity<> (HttpStatus.NO_CONTENT);
+		}
 	}
 	
 	//3
@@ -67,6 +78,16 @@ public class UserController {
 		user.setLastName(userDetail.getLastName());
 		user.setEmail(userDetail.getEmail());
 		user.setPassword("" + userDetail.getPassword());
+		
+		String userId = UUID.randomUUID().toString();
+		
+		user.setUserId(userId);
+		
+		if (users == null) {
+			users = new HashMap();
+		}
+		
+		users.put(userId, user);
 		
 		return new ResponseEntity<UserRest> (user, HttpStatus.OK);
 	
