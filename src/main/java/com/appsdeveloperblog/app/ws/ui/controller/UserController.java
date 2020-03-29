@@ -1,21 +1,33 @@
 package com.appsdeveloperblog.app.ws.ui.controller;
 
+import javax.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.appsdeveloperblog.app.ws.ui.model.response.UserRest;
+import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
+
 
 @RestController
 @RequestMapping("users") //http://localhost:8080/users
 public class UserController {
 	
+	//1
 	//getting request with page and limit 
+	//this get we are using parameters page, limit, sort 
+	//this parameters will control the page, limit and sort about the result
 	@GetMapping
 	public String getUser( @RequestParam ( value="page", defaultValue="1") int page, 
 						   @RequestParam ( value="limit", defaultValue="50") int limit,
@@ -24,33 +36,56 @@ public class UserController {
 		return "get user was called with params page = " + page + " limit = " + limit + " sort = " + sort;
 	}
 	
+	//2 
 	//getting request with some specific user id
-	@GetMapping(path="/{userId}")
-	public UserRest getUser(@PathVariable String userId) {
+	//the parameter produces says that  response will be in xml or json
+	@GetMapping(path="/{userId}", 
+				produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
 		
 		UserRest user = new UserRest();
 		
 		user.setFirstName("Marcio");
 		user.setLastName("Thiele");
 		user.setEmail("marcio.sthiele@gmail.com");
-		user.setUserId("" + userId);
+		user.setPassword("" + userId);
 		
-		return user;
+		return new ResponseEntity<UserRest> (user, HttpStatus.OK);
 	}
 	
-	
+	//3
 	//POST
-	@PostMapping
-	public String createUser() {
-		return "create user was called...";
+	//the parameter consumes says that require xml or json body
+	//the parameter produces says that  response will be in xml or json
+	@PostMapping(consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE },
+			     produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<UserRest>  createUser(@Valid @RequestBody UserDetailsRequestModel userDetail ) {
+		
+		UserRest user = new UserRest();
+		
+		user.setFirstName(userDetail.getFirstName());
+		user.setLastName(userDetail.getLastName());
+		user.setEmail(userDetail.getEmail());
+		user.setPassword("" + userDetail.getPassword());
+		
+		return new ResponseEntity<UserRest> (user, HttpStatus.OK);
+	
 	}
 	
+	//4
+	//
+	//
+	//
 	//PUT
 	@PutMapping
 	public String updateUser() {
 		return "update user was called...";
 	}
 	
+	//5
+	//
+	//
+	//
 	//DELETE
 	@DeleteMapping
 	public String deleteUser() {
