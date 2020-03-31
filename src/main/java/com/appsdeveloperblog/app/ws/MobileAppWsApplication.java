@@ -10,6 +10,7 @@ public class MobileAppWsApplication {
 	//second commentary
 	public static void main(String[] args) {
 		SpringApplication.run(MobileAppWsApplication.class, args);
+		
 	}
 
 }

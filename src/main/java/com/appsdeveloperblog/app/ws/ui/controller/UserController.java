@@ -31,18 +31,32 @@ public class UserController {
 	Map<String, UserRest> users;
 	
 	//1
+	//GET
 	//getting request with page and limit 
 	//this get we are using parameters page, limit, sort 
 	//this parameters will control the page, limit and sort about the result
 	@GetMapping
-	public String getUser( @RequestParam ( value="page", defaultValue="1") int page, 
+	public ResponseEntity<?> getUser( @RequestParam ( value="page", defaultValue="1") int page, 
 						   @RequestParam ( value="limit", defaultValue="50") int limit,
 						   @RequestParam ( value="sort", defaultValue="desc", required=false) String sort){
 		
-		return "get user was called with params page = " + page + " limit = " + limit + " sort = " + sort;
+		//testing an specific error with the class AppExceptionsHandles
+		//String name = null;
+		//int nameLength = name.length();
+
+		
+		if (users == null || users.isEmpty()) {
+			//System.out.println(users);
+			//ResponseEntity.noContent().build();
+			return new ResponseEntity<UserRest> (HttpStatus.NO_CONTENT);
+		}
+		
+		return ResponseEntity.ok(users);
+		//return new ResponseEntity<UserRest> (users.values(), HttpStatus.OK);
 	}
 	
 	//2 
+	//GET
 	//getting request with some specific user id
 	//the parameter produces says that  response will be in xml or json
 	@GetMapping(path="/{userId}", 
@@ -84,7 +98,8 @@ public class UserController {
 		user.setUserId(userId);
 		
 		if (users == null) {
-			users = new HashMap();
+			//users = new HashMap();
+			users = new HashMap<String, UserRest>();
 		}
 		
 		users.put(userId, user);
@@ -94,9 +109,6 @@ public class UserController {
 	}
 	
 	//4
-	//
-	//
-	//
 	//PUT
 	@PutMapping(path="/{userId}",
 				consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE },
@@ -122,13 +134,18 @@ public class UserController {
 	}
 	
 	//5
-	//
-	//
-	//
 	//DELETE
-	@DeleteMapping
-	public String deleteUser() {
-		return "delete user was called...";
+	@DeleteMapping(path="/{userId}")
+	public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
+		
+		if(users.containsKey(userId)) {
+			users.remove(userId);
+			
+			return ResponseEntity.ok().build();
+			
+		}else {
+			return ResponseEntity.noContent().build();
+		}
 	}
 	
 }
